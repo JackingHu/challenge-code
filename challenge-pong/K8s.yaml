@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pong
+  labels:
+    app: pong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pong
+  template:
+    metadata:
+      labels:
+        app: pong
+    spec:
+      containers:
+        - name: pong-container
+          image: pong:0.0.1
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pong-service
+spec:
+  selector:
+    app: pong
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 32080
+  type: NodePort
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-example-host
+  annotations:
+    # 每个 IP 每秒可以访问 1 次
+    nginx.ingress.kubernetes.io/limit-rps: 1
+    nginx.ingress.kubernetes.io/global-rate-limit-window: 1s
+    # 超出后的响应码
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      limit_req_status 429;
+spec:
+  rules:
+    - host: "www.pong.com"
+      http:
+        paths:
+          - path: "/"
+            backend:
+              service:
+                name: pong-service
+                port:
+                  number: 8080

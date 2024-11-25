@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: challenge-ping
+  profiles:
+    active: local
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pong
+    username: postgres
+    password: 123456
+
+# 应用服务 WEB 访问端口
+server:
+  port: 8081
+
+#pong服务的请求地址
+api:
+  config:
+    pong:
+      base:
+        url: http://localhost:8080
+      uri: /pong/{words}
+
+fileLock:
+  file: F:\file-lock.txt
+
+# 日志文件配置
+logging:
+  file:
+    name: ./logs/${spring.application.name}_${server.port}.log # 日志文件名，全路径

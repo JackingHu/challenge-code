@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: challenge-pong
+  profiles:
+    active: local
+
+  datasource:
+    url: jdbc:postgresql://192.168.5.10:5432/pong
+    username: postgres
+    password: 123456
+
+# 应用服务 WEB 访问端口
+server:
+  port: 8080
+mybatis:
+  lazy-initialization: true # 单元测试，设置 MyBatis Mapper 延迟加载，加速每个单元测试
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true # 虽然默认为 true ，但是还是显示去指定下。
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 打印日志
+  mapper-locations: classpath*:mapper/*.xml
+  # 实体扫描，多个package用逗号或者分号分隔
+  type-aliases-package: com.be.code.*.domain   #自己的实体类地址
+
+# 日志文件配置
+logging:
+  file:
+    name: ./logs/${spring.application.name}_${server.port}.log # 日志文件名，全路径
+
+# pong服务的最大请求次数
+api:
+  config:
+    maxRequest: 1.0
